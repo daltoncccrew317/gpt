@@ -1,0 +1,417 @@
+# Set up the game
+player_name = "Elizabeth"
+player_health = 100
+player_strength = 10
+player_inventory = []
+current_room = "Desk"
+# Define a function for dice rolls
+def roll_dice(num_sides):
+    return random.randint(1, num_sides)
+
+
+# Define the starting scene
+print(f"You, {player_name}, are sitting at your desk in the middle of a busy office building.")
+print("You hear the sound of phones ringing and people typing on their keyboards.")
+print("Suddenly, you hear a loud explosion coming from outside.")
+# Main game loop
+while True:
+    # Print the current room
+    if current_room == "Desk":
+        print("You are at your desk.")
+    elif current_room == "Hallway":
+        print("You are in a dimly lit hallway.")
+    elif current_room == "Stairwell":
+        print("You are in a stairwell.")
+    elif current_room == "Rooftop":
+        print("You are on the rooftop of the office building.")
+    elif current_room == "Outside":
+        print("You made it outside! Now find Dalton.")
+
+    # Ask the player what they want to do
+    action = input("What do you want to do? ")
+
+    # Handle different actions
+    if action == "move":
+        # Move to a different room
+        if current_room == "Desk":
+            print("You leave your desk and head to the hallway.")
+            current_room = "Hallway"
+        elif current_room == "Hallway":
+            print("You find the stairwell and start climbing up.")
+            current_room = "Stairwell"
+        elif current_room == "Stairwell":
+            print("You reach the rooftop and see Dalton waiting for you.")
+            current_room = "Rooftop"
+        elif current_room == "Rooftop":
+            print("You jump off the building and land safely on the ground.")
+            current_room = "Outside"
+    elif action == "fight":
+        # Battle an NPC
+        npc_health = 50
+        while npc_health > 0 and player_health > 0:
+            npc_damage = roll_dice(6)
+            player_damage = roll_dice(6) + player_strength
+            print(f"You deal {player_damage} damage to the NPC!")
+            npc_health -= player_damage
+            if npc_health <= 0:
+                print("You defeated the NPC!")
+                break
+            print(f"The NPC deals {npc_damage} damage to you!")
+            player_health -= npc_damage
+            if player_health <= 0:
+                print("You have been defeated!")
+                exit()
+    elif action == "inventory":
+        # View the player's inventory
+        print(f"You currently have {len(player_inventory)} items in your inventory: ")
+        for item in player_inventory:
+            print(f"- {item}")
+    else:
+        print("Invalid action. Please try again.")
+
+import random
+
+# Define the game world
+office = [
+    ["desk", "chair", "computer"],
+    ["copier", "printer", "water cooler"],
+    ["conference table", "whiteboard", "bookshelf"]
+]
+
+# Define the NPCs
+security_guard = {"name": "Bob", "health": 10, "damage": 5}
+office_worker = {"name": "Sarah", "task_completed": False}
+
+# Define the player character
+player = {"name": "Elizabeth", "health": 20, "strength": 10, "items": []}
+
+# Define the boss NPC
+boss = {"name": "Mr. Smith", "health": 50, "damage": 20}
+
+# Define the puzzles
+key_found = False
+riddle_solved = False
+
+# Define the mini-games
+def play_basketball():
+    print("You shoot the ball and it goes in the hoop!")
+    return random.randint(1, 6)
+
+# Define the dialogue options
+def talk_to_security_guard():
+    print("You approach the security guard.")
+    print("Security guard: Hey, what are you doing here?")
+    response2 = input("1. \"I work here.\" 2. \"Just looking around.\" ")
+    if response2 == "1":
+        print("Security guard: Oh, sorry about that. I didn't recognize you.")
+    else:
+        print("Security guard: Well, this isn't a tourist attraction. You need to leave.")
+        player["health"] -= security_guard["damage"]
+        print(f"You took {security_guard['damage']} damage from the security guard.")
+
+def talk_to_office_worker():
+    print("You approach the office worker.")
+    print("Office worker: Hey, can you help me with something?")
+    response = input("1. \"Sure, what do you need?\" 2. \"I'm kind of busy right now.\" ")
+    if response == "1":
+        print("Office worker: I need you to fix the copier. It's jammed again.")
+        if "paperclip" in player["items"]:
+            print("You use the paperclip to unjam the copier.")
+            office_worker["task_completed"] = True
+        else:
+            print("You don't have anything to fix the copier with.")
+    else:
+        print("Office worker: Oh, okay. Thanks anyway.")
+
+# Define the main game loop
+while True:
+    # Print the current location
+    print(f"You are at your {office[0][0]}.")
+
+    # Check for NPCs
+    if player["health"] > 0 and security_guard["health"] > 0:
+        print("There is a security guard here.")
+        talk_to_security_guard()
+        if player["health"] <= 0:
+            print("You have been defeated. Game over.")
+            break
+    if player["health"] > 0 and not office_worker["task_completed"]:
+        print("There is an office worker here.")
+        talk_to_office_worker()
+
+    # Check for puzzles
+    if not key_found:
+        print("There is a locked door here.")
+        response = input("1. Search for key 2. Move on ")
+        if response == "1" and "key" not in player["items"]:
+            print("You find a key.")
+            player["items"].append("key")
+            key_found = True
+        elif response == "1" and "key" in player["items"]:
+            print("You already have the key.")
+# Check for mini-games
+if player["health"] > 0:
+    response = input("Do you want to play basketball? (y/n) ")
+    if response == "y":
+        score = play_basketball()
+        print(f"You scored {score} points!")
+        if score >= 4:
+            print("You win a health potion!")
+            player["items"].append("health potion")
+
+# Check for power-ups
+if "health potion" in player["items"]:
+    response = input("Do you want to use a health potion? (y/n) ")
+    if response == "y":
+        print("You drink the health potion.")
+        player["health"] += 10
+        player["items"].remove("health potion")
+
+# Check for items
+if "key" in player["items"]:
+    response = input("Do you want to use the key? (y/n) ")
+    if response == "y":
+        print("You unlock the door.")
+
+
+# Check for boss battle
+if boss["health"] > 0:
+    print("You hear a loud voice coming from down the hallway.")
+    print(f"{boss['name']}: Elizabeth, I know you're in here!")
+    response = input("1. \"What do you want?\" 2. \"Come and get me!\" ")
+    if response == "1":
+        print(f"{boss['name']}: I want the documents you stole from me.")
+        response = input("1. \"I don't know what you're talking about.\" 2. \"I'll give them back if you let me go.\" ")
+        if response == "1":
+            print(f"{boss['name']}: Don't lie to me, Elizabeth!")
+            player["health"] -= boss["damage"]
+            print(f"You took {boss['damage']} damage from {boss['name']}.")
+        else:
+            print(f"{boss['name']}: Fine, but I'll be watching you.")
+            boss["health"] = 0
+    else:
+        print(f"{boss['name']}: You asked for it!")
+        player["health"] -= boss["damage"]
+        print(f"You took {boss['damage']} damage from {boss['name']}.")
+        if player["health"] <= 0:
+            print("You have been defeated. Game over.")
+
+    if "health potion" in player["items"]:
+        response = input("Do you want to use a health potion? (y/n) ")
+        if response == "y":
+            print("You drink the health potion.")
+            player["health"] += 10
+            player["items"].remove("health potion")
+            print(f"Your health is now {player['health']}.")
+
+    # Check for items
+    if "key" in player["items"]:
+        response = input("Do you want to use the key? (y/n) ")
+        if response == "y":
+            print("You unlock the door.")
+
+
+    # Check for boss battle
+    if boss["health"] > 0:
+        print("You hear a loud voice coming from down the hallway.")
+        print(f"{boss['name']}: Elizabeth, I know you're in here!")
+        response = input("1. \"What do you want?\" 2. \"Come and get me!\" ")
+        if response == "1":
+            print(f"{boss['name']}: I want the documents you stole from me.")
+            response = input("1. \"I don't know what you're talking about.\" 2. \"I'll give them back if you let me go.\" ")
+            if response == "1":
+                print(f"{boss['name']}: Don't lie to me, Elizabeth!")
+                player["health"] -= boss["damage"]
+                print(f"You took {boss['damage']} damage from {boss['name']}.")
+                print(f"Your health is now {player['health']}.")
+            else:
+                print(f"{boss['name']}: Fine, but I'll be watching you.")
+                boss["health"] = 0
+        else:
+            print(f"{boss['name']}: You asked for it!")
+            player["health"] -= boss["damage"]
+            print(f"You took {boss['damage']} damage from {boss['name']}.")
+            print(f"Your health is now {player['health']}.")
+            if player["health"] <= 0:
+                print("You have been defeated. Game over.")
+
+
+# Check for endings
+if "key" in player["items"]:
+    print("You escape the building and find Dalton waiting for you outside.")
+    print("Congratulations, you win!")
+else:
+    print("You are trapped in the building forever.")
+    print("Game over.")
+
+# Define NPC attributes
+npcs = [
+    {"name": "Security Guard", "health": 20, "damage": 5},
+    {"name": "IT Guy", "health": 15, "damage": 3},
+    {"name": "Janitor", "health": 10, "damage": 2},
+]
+
+# Generate random NPC
+npc = random.choice(npcs)
+
+# Print NPC encounter message
+print(f"You encounter a {npc['name']}!")
+
+# Combat loop
+while npc["health"] > 0:
+    # Player turn
+    print("Your turn!")
+    response = input("1. Attack 2. Use item ")
+    if response == "1":
+        damage = random.randint(1, 5)
+        npc["health"] -= damage
+        print(f"You attack the {npc['name']} for {damage} damage!")
+    elif response == "2":
+        if not player["items"]:
+            print("You have no items to use.")
+            continue
+        print("Select an item to use:")
+        for i, item in enumerate(player["items"]):
+            print(f"{i+1}. {item}")
+        selection = int(input()) - 1
+        item_name = player["items"][selection]
+        if item_name == "health potion":
+            player["health"] += 10
+            player["items"].remove(item_name)
+            print("You drink a health potion.")
+            print(f"Your health is now {player['health']}.")
+        else:
+            print("That item cannot be used in combat.")
+    else:
+        print("Invalid input.")
+        continue
+
+    # Check if NPC is defeated
+    if npc["health"] <= 0:
+        print(f"You defeated the {npc['name']}!")
+        player["items"].append("key")
+        print("You found a key!")
+        break
+
+    # NPC turn
+    print(f"The {npc['name']}'s turn!")
+    player["health"] -= npc["damage"]
+    print(f"The {npc['name']} attacks you for {npc['damage']} damage!")
+    print(f"Your health is now {player['health']}.")
+    if player["health"] <= 0:
+        print("You have been defeated. Game over.")
+        break
+
+# Define locked doors
+locked_doors = {
+    "stairwell": True,
+    "roof access": True,
+}
+
+# Check for locked doors
+if room in locked_doors and locked_doors[room]:
+    if "key" not in player["items"]:
+        print("The door is locked. You need a key to proceed.")
+        continue
+    else:
+        locked_doors[room] = False
+        print("You unlocked the door!")
+
+# Check if game is won
+if room == "outside" and "Dalton" in npc_names:
+    print("Congratulations, you escaped the building and found Dalton! You win!")
+    break
+
+# Define enemies
+enemies = {
+    "Security Guard": {"health": random.randint(20, 30), "damage": random.randint(5, 10)},
+    "Office Manager": {"health": random.randint(15, 25), "damage": random.randint(3, 7)},
+    "IT Guy": {"health": random.randint(10, 20), "damage": random.randint(2, 5)},
+}
+
+# Combat loop
+if npc_name in enemies:
+    enemy = enemies[npc_name]
+    print("You encounter a", npc_name)
+    while enemy["health"] > 0 and player["health"] > 0:
+        action = input("Do you want to attack or dodge? ")
+        if action.lower() == "attack":
+            damage = random.randint(1, player["damage"])
+            enemy["health"] -= damage
+            print("You hit the", npc_name, "for", damage, "damage!")
+        elif action.lower() == "dodge":
+            if random.random() < 0.5:
+                print("You dodge the", npc_name, "'s attack!")
+            else:
+                damage = random.randint(1, enemy["damage"])
+                player["health"] -= damage
+                print("The", npc_name, "hits you for", damage, "damage!")
+        else:
+            print("Invalid action. Please choose attack or dodge.")
+            continue
+    if player["health"] <= 0:
+        print("You have been defeated...")
+        break
+    else:
+        print("You defeated the", npc_name)
+        npc_names.remove(npc_name)
+
+# Define health packs
+health_packs = {
+    "first aid kit": 20,
+    "bandages": 10,
+}
+
+# Check for health packs
+if item_name in health_packs:
+    health = health_packs[item_name]
+    player["health"] += health
+    if player["health"] > player["max_health"]:
+        player["health"] = player["max_health"]
+    print("You used the", item_name, "and restored", health, "health!")
+    del player["items"][item_index
+
+    # Define items
+    items = {
+        "keycard": {"description": "Allows you to open locked doors.", "effect": "unlock"},
+        "coffee": {"description": "Increases your speed.", "effect": "speed"},
+        "flashlight": {"description": "Allows you to see in the dark.", "effect": "light"},
+    }
+
+    # Check for items
+    if item_name in items:
+        item = items[item_name]
+    if item["effect"] == "unlock":
+        unlocked_doors.append(door_name)
+    print("You used the", item_name, "to unlock the", door_name, "door!")
+    elif item["effect"] == "speed":
+    player["speed"] += var = 1
+    print("You drink the", item_name, "and feel faster!")
+    elif item["effect"] == "light":
+    print("You turn on the", item_name, "and can now see in the dark!")
+    del player["items"][item_index]
+
+    # Define bosses
+    bosses = {
+        "manager": {"health": 20, "damage": 3, "item": "access_card"}
+    }
+
+    # Check for boss
+    if current_npc in bosses:
+        boss = bosses[current_npc]
+    print("You've encountered the", current_npc, "boss!")
+    while boss["health"] > 0 and player["health"] > 0:
+        player_damage = random.randint(1, player["damage"])
+        boss_damage = random.randint(1, boss["damage"])
+        print("You deal", player_damage, "damage to the boss!")
+        boss["health"] -= player_damage
+        if boss["health"] <= 0:
+            print("You defeated the", current_npc, "boss!")
+            player["items"].append(boss["item"])
+            break
+        print("The", current_npc, "boss deals", boss_damage, "damage to you!")
+        player["health"] -= boss_damage
+        if player["health"] <= 0:
+            print("You were defeated by the", current_npc, "boss!")
+            break
+
